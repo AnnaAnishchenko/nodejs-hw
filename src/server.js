@@ -22,9 +22,9 @@ app.get('/notes', (req, res) => {
 
 // маршрут, який буде повертати одну нотатку за її ідентифікатором:
 app.get('/notes/:noteId', (req, res) => {
-  const id_param = Number(req.params);
+  const { noteId } = req.params;
   res.status(200).json({
-    message: `Retrieved note with ID: ${id_param}`,
+    message: `Retrieved note with ID: ${noteId}`,
   });
 });
 
