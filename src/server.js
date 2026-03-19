@@ -4,57 +4,33 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
 import 'dotenv/config';
+import { connectMongoDB } from './db/connectMongoDB.js';
+
+import { logger } from './middleware/logger.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import notesRouter from './routes/notesRoutes.js';
 
 const app = express();
 
 // Використовуємо значення з .env або дефолтний порт 3000
 const PORT = process.env.PORT ?? 3000;
 
-// middleware
-app.use(cors());
-app.use(express.json());
+// Глобальні middleware
+app.use(logger); // 1. Логер першим — бачить усі запити
+app.use(express.json()); // 2. Парсинг JSON-тіла
+app.use(cors()); // 3. Дозвіл для запитів з інших доменів
+
 app.use(pino());
 
-// маршрут, який буде повертати всі нотатки:
-app.get('/notes', (req, res) => {
-  res.status(200).json({ message: 'Retrieved all notes' });
-});
+app.use(notesRouter); // підключаємо групу маршрутів нотаток
 
-// маршрут, який буде повертати одну нотатку за її ідентифікатором:
-app.get('/notes/:noteId', (req, res) => {
-  const { noteId } = req.params;
-  res.status(200).json({
-    message: `Retrieved note with ID: ${noteId}`,
-  });
-});
+app.use(notFoundHandler); // 404 — якщо маршрут не знайдено
+app.use(errorHandler); // Error — якщо під час запиту виникла помилка
 
-// Маршрут для тестування middleware помилки
-app.get('/test-error', (req, res) => {
-  // Штучна помилка для прикладу
-  throw new Error('Simulated server error');
-});
-
-// 404 middleware
-app.use((req, res) => {
-  res.status(404).json({
-    message: 'Route not found',
-  });
-});
-// error middleware
-app.use((err, req, res, next) => {
-  res.status(500).json({
-    message: err.message,
-  });
-});
+await connectMongoDB(); // підключення до MongoDB
 
 // Запуск сервера
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-});
-
-// GET-запит до маршруту "/health"
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'Ok!',
-  });
 });
