@@ -3,6 +3,7 @@
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
+import { errors } from 'celebrate';
 
 import { connectMongoDB } from './db/connectMongoDB.js';
 
@@ -11,8 +12,6 @@ import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 import notesRouter from './routes/notesRoutes.js';
-
-// import pino from 'pino-http';
 
 const app = express();
 
@@ -31,11 +30,12 @@ app.use(
 
 app.use(cors());
 
-// app.use(pino());
-
 app.use(notesRouter); // підключаємо групу маршрутів нотаток
 
 app.use(notFoundHandler); // 404 — якщо маршрут не знайдено
+
+app.use(errors()); // обробка помилок від celebrate (валідація)
+
 app.use(errorHandler); // Error — якщо під час запиту виникла помилка
 
 await connectMongoDB(); // підключення до MongoDB
