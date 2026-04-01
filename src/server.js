@@ -4,6 +4,7 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 import { errors } from 'celebrate';
+import cookieParser from 'cookie-parser';
 
 import { connectMongoDB } from './db/connectMongoDB.js';
 
@@ -11,6 +12,7 @@ import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
+import authRoutes from './routes/authRoutes.js';
 import notesRouter from './routes/notesRoutes.js';
 
 const app = express();
@@ -29,7 +31,9 @@ app.use(
 );
 
 app.use(cors());
+app.use(cookieParser()); // Додаємо middleware для парсингу cookie
 
+app.use(authRoutes); // підключаємо групу маршрутів аутентифікації
 app.use(notesRouter); // підключаємо групу маршрутів нотаток
 
 app.use(notFoundHandler); // 404 — якщо маршрут не знайдено
