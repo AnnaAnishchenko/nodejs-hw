@@ -2,16 +2,22 @@
 
 import { Router } from 'express';
 import { celebrate } from 'celebrate';
+
+import {
+  loginUserSchema,
+  registerUserSchema,
+  requestResetEmailSchema,
+  resetPasswordSchema,
+} from '../validations/authValidation.js'; // Імпортуємо схеми валідації
+
 import {
   loginUser,
   logoutUser,
   refreshUserSession,
   registerUser,
-} from '../controllers/authController.js';
-import {
-  loginUserSchema,
-  registerUserSchema,
-} from '../validations/authValidation.js';
+  requestResetEmail,
+  resetPassword,
+} from '../controllers/authController.js'; // Імпортуємо  контролери
 
 const router = Router();
 
@@ -27,3 +33,17 @@ router.post('/auth/logout', logoutUser);
 // Маршрут оновлення сесії
 router.post('/auth/refresh', refreshUserSession);
 export default router;
+
+// Маршрут запиту на скидання пароля
+router.post(
+  '/auth/request-reset-email',
+  celebrate(requestResetEmailSchema),
+  requestResetEmail,
+);
+
+// Маршрут для скидання пароля
+router.post(
+  '/auth/reset-password',
+  celebrate(resetPasswordSchema),
+  resetPassword,
+);
