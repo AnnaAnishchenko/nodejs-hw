@@ -32,7 +32,6 @@ router.post('/auth/logout', logoutUser);
 
 // Маршрут оновлення сесії
 router.post('/auth/refresh', refreshUserSession);
-export default router;
 
 // Маршрут запиту на скидання пароля
 router.post(
@@ -47,3 +46,5 @@ router.post(
   celebrate(resetPasswordSchema),
   resetPassword,
 );
+
+export default router;
