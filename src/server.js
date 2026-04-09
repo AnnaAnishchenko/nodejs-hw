@@ -14,6 +14,7 @@ import { errorHandler } from './middleware/errorHandler.js';
 
 import authRoutes from './routes/authRoutes.js';
 import notesRouter from './routes/notesRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use(cookieParser()); // Додаємо middleware для парсингу co
 
 app.use(authRoutes); // підключаємо групу маршрутів аутентифікації
 app.use(notesRouter); // підключаємо групу маршрутів нотаток
+app.use(userRoutes); // підключаємо групу маршрутів користувача
 
 app.use(notFoundHandler); // 404 — якщо маршрут не знайдено
 

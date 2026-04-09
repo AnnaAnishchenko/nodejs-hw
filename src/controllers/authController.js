@@ -139,16 +139,10 @@ export const requestResetEmail = async (req, res) => {
     { expiresIn: '15m' },
   );
 
-  // для отримання токену - видалити
-  console.log(resetToken);
-
-  // Формуємо шлях до шаблона
+  // шаблон відповіді для листа
   const templatePath = path.resolve('src/templates/reset-password-email.html');
-  //  Читаємо шаблон
   const templateSource = await fs.readFile(templatePath, 'utf-8');
-  //  Готуємо шаблон до заповнення
   const template = handlebars.compile(templateSource);
-  //  Формуємо із шаблона HTML документ з динамічними даними
   const html = template({
     name: user.username,
     link: `${process.env.FRONTEND_DOMAIN}/reset-password?token=${resetToken}`,
@@ -159,7 +153,7 @@ export const requestResetEmail = async (req, res) => {
       from: process.env.SMTP_FROM,
       to: email,
       subject: 'Reset your password',
-      html, //  Передаємо HTML у функцію надписання пошти
+      html,
     });
   } catch {
     throw createHttpError(
